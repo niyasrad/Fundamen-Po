@@ -132,3 +132,172 @@ A new Execution Context is created and pushed to the call stack when a function 
 Understanding: When you run a function, it's pushed to the call stack. When it's done, it's popped off the stack.
 
 */
+
+/*
+
+7. Functions, Context and Variable Environments
+Variable Environment - Where the variables live and how they relate to each other in memory. Essentially, where the variables are.
+
+*/
+
+function funToCallE() {
+    var varToCallE
+    console.log("7", varToCallE)
+}
+
+function funToCallF() {
+    var varToCallE = 2
+    console.log("7.1", varToCallE)
+    funToCallE()
+}
+
+var varToCallE = 1
+console.log("7.2", varToCallE)
+funToCallF()
+console.log("7.3", varToCallE)
+
+/*
+
+Understanding: The variable environment is created for each execution context. It's where the variables live and how they relate to each other in memory (Scope).
+
+And this might bring a doubt, what about the global execution context?
+
+When you decalare a variable inside of your function, it eliminates any possibility of accessing the global variable with the same name.
+
+But if you do not declare a variable inside of your function, it will look up the scope chain and find the variable in the outer environment. More on that very soon.
+
+*/
+
+/*
+
+8. Scope Chain
+
+Warning: Interesting, but very fundemental concept. Pay attention!
+
+The above mentioned problem, wherein, let's say I don't declare the variable, and see what's being logged inside the scope.
+
+Scope Chain: The scope chain is the order in which functions are written lexically in the code.
+
+*/
+
+function funToCallG() {
+    console.log("8", varToCallG)
+}
+
+function funToCallH() {
+    varToCallG = 2
+    console.log("8.1", varToCallG)
+    funToCallG()
+}
+
+var varToCallG = 1
+console.log("8.2", varToCallG)
+funToCallH()
+
+/*
+
+Understanding: The variable is not declared, but it's still logging the value. Why?
+
+Now, the variable is not declared in the function therefore it's checked up on the outer environment, which is the global execution context. (Lexically written before the function)
+
+To remember: Whenever there's an execution context created, it also is created with a reference to the outer environment. (The place where the function was written lexically)
+
+The links are called the scope chain. (The order in which functions are written lexically in the code)
+
+*/
+
+/*
+
+Let's do something interesting, and change the lexical order.
+
+*/
+
+function funToCallJ() {
+    function funToCallI() {
+        console.log("8.3", varToCallI)
+    }
+    var varToCallI = 2
+    console.log("8.3.1", varToCallI)
+    funToCallI()
+}
+
+var varToCallI = 1
+console.log("8.3.2", varToCallI)
+funToCallJ()
+
+/*
+
+Understanding: The outer reference here for the nested function was the outer function. Therefore outputting the way we woudln't expect.
+
+It will always look up the scope chain, and find the variable in the outer environment. (The place where the function was written lexically) 
+
+Note: If it has to go up the scope chain, it will go up the scope chain, until it finds the variable. If it doesn't find it, it will throw an error.
+
+*/
+
+function funToCallK() {
+    function funToCallL() {
+        console.log("8.4", varToCallL)
+    }
+    console.log("8.4.1", varToCallL)
+    funToCallL()
+}
+
+var varToCallL = 1
+console.log("8.4.2", varToCallL)
+funToCallK()
+
+
+/*
+
+Understanding: Lexical order is important. Check where, outside the scope chain, the variable is declared. If it's not declared, it will throw an error. This can help you debug issues in JavaScipt.
+
+*/
+
+/*
+
+9. Scope, ES6 and Let
+
+Scope: Where a variable is available in your code and if it's truly the same variable, or a new copy.
+
+ES6: Let and Const
+
+Let: Let is a new way of declaring variables in ES6. It's a block scoped variable. (It's only available in the block it's declared in, not outside of it)
+
+If variables declared with let are tried to be accessed outside of the block or, before the declaration, it will throw an error.
+
+*/
+
+/*
+
+10. Asynchronous Callbacks
+Asynchronous: More than one at a time.
+
+JavaScript is synchronous, single threaded language. But it has functions that are asynchronous. How? It's because of the event queue. (The event loop) And the browser has many elements like the HTTP request, DOM events, etc. that are asynchronous, and are handled by the browser.
+
+Let's see an example of this.
+Warning: Broken! (Don't run it)
+
+*/
+
+function funToCallM() {
+    let timeToWait = 3000 + new Date().getTime()
+    while (new Date() < timeToWait) {}
+    console.log("10", "You've called the function!")
+}
+
+function clickHandler() {
+    console.log("10.1", "Click event!")
+}
+
+document.addEventListener('click', clickHandler)
+funToCallM()
+console.log("10.2", "You've called the function!")
+
+/*
+
+Understanding: The event queue is looked at only when the execution stack is empty. (The call stack is empty)
+
+Therefore, current long running functions will block the code from running. (The while loop)
+
+*/
